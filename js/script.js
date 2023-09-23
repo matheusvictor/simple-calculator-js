@@ -10,6 +10,10 @@ class Calculator {
   }
 
   addDigit(digit) {
+    if (digit === "." && currentOperationText.innerText.includes(".")) {
+      return;
+    }
+
     this.currentInput = digit; // currentInput passar a ter o valor textual do botão clicado pelo usuário
     this.updateScreen();
   }
