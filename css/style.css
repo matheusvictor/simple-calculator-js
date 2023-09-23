@@ -64,6 +64,7 @@ body {
 
 #button-container #del-button {
   color: white;
+  border-color: black;
   background-color: rgb(204, 38, 38);
 }
 
@@ -72,6 +73,7 @@ body {
   color: white;
   grid-row: span 2;
   grid-column: span 1; /* Ocupa duas colunas */
+  border-color: black;
   background-color: rgb(15, 156, 15);
 }
 
