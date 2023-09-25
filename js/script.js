@@ -1,9 +1,11 @@
+const history = document.querySelector("#history-operations");
 const previousOperationText = document.querySelector("#previous-operation");
 const currentOperationText = document.querySelector("#current-operation");
 const buttons = document.querySelectorAll("#button-container button");
 
 class Calculator {
-  constructor(previousOperationText, currentOperationText) {
+  constructor(history, previousOperationText, currentOperationText) {
+    this.history = history;
     this.currentInput = "";
     this.previousOperationText = previousOperationText;
     this.currentOperationText = currentOperationText;
@@ -16,6 +18,7 @@ class Calculator {
       console.log(currentOperationText.innerText[0] === ".");
       return;
     }
+
     this.currentInput = digit; // currentInput passar a ter o valor textual do botão clicado pelo usuário
     this.updateScreen();
   }
@@ -54,16 +57,17 @@ class Calculator {
         } else {
           operationValue =
             "Indeterminação causada por uma tentativa de divisão por zero";
-          this.updateScreen(operationValue, "", null, null);
+          this.updateScreen(operationValue, "");
         }
         break;
       case "mod":
-        // TODO: A ser implementado
+        operationValue = Math.abs(current);
+        console.log(previous, current, operationValue);
         break;
       case "x²":
         operationValue = current * current;
         console.log(operationValue);
-        this.updateScreen(operationValue, operation, current, current);
+        this.updateScreen(operationValue, "", current, current);
         break;
       case "%":
         operationValue = previous * (previous / 100);
@@ -95,14 +99,15 @@ class Calculator {
 
   changeOperation(newOperation) {
     const possibleOperation = ["+", "-", "*", "/", "mod", "sqrt", "pow"];
+    const cleanerOperaion = ["C", "CE", "DEL"];
     const parentesis = ["(", ")"];
 
-    if (!possibleOperation.includes(newOperation) && !parentesis) {
+    if (!possibleOperation.includes(newOperation) || cleanerOperaion) {
       return;
     }
 
     this.previousOperationText.innerText =
-      this.previousOperationText.innerText.slice(0, -1) + newOperation;
+      this.previousOperationText.innerText.slice(0, -2) + newOperation;
   }
 
   clearLastDigitOnCurrentInput() {
@@ -146,7 +151,13 @@ class Calculator {
   }
 }
 
-const calculator = new Calculator(previousOperationText, currentOperationText);
+const calculator = new Calculator(
+  history,
+  previousOperationText,
+  currentOperationText
+);
+
+calculator.history.innerText = "Não há histórico";
 
 /* Adicionar evento de clique em cada botão */
 buttons.forEach((btn) => {
@@ -163,8 +174,12 @@ buttons.forEach((btn) => {
       calculator.addDigit(value); // altera o atributo currentInput para o valor clicado pelo usuário
       // TODO: Tratar regras de inserção de parênteses e ponto
     } else {
-      console.log(`A operação ${value} foi clicada!`);
-      calculator.processOperation(value);
+      if (calculator.currentOperationText.innerText === "" && value === "-") {
+        calculator.addDigit(value);
+      } else {
+        console.log(`A operação ${value} foi clicada!`);
+        calculator.processOperation(value);
+      }
     }
   });
 });
