@@ -71,7 +71,7 @@ body {
 #button-container #equal-button {
   height: auto;
   color: white;
-  grid-row: span 2;
+  grid-row: span 1;
   grid-column: span 1; /* Ocupa duas colunas */
   border-color: black;
   background-color: rgb(15, 156, 15);
