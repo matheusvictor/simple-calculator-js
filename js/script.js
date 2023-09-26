@@ -48,6 +48,7 @@ class Calculator {
         break;
       case "*":
         operationValue = previous * current;
+        console.log(operationValue, previous, current, operation);
         this.updateScreen(operationValue, operation, current, previous);
         break;
       case "/":
@@ -61,20 +62,31 @@ class Calculator {
         }
         break;
       case "mod":
+        operation = " +";
         operationValue = Math.abs(current);
-        console.log(previous, current, operationValue);
+        this.updateScreen(operationValue, operation);
         break;
       case "x²":
-        operationValue = current * current;
+        const pow = current * current;
+        operationValue = previous + pow;
         console.log(operationValue);
-        this.updateScreen(operationValue, "", current, current);
+        this.updateScreen(operationValue, "+");
         break;
       case "%":
-        operationValue = previous * (previous / 100);
-        this.updateScreen(operationValue, operation, current, previous);
+        operationValue = current / 100;
+        this.updateScreen(operationValue, "+");
         break;
       case "√":
-        // TODO: A ser implementado
+        operation = " +";
+        const sqrt = Math.sqrt(current);
+        operationValue = previous + sqrt;
+        this.updateScreen(operationValue, operation, sqrt, previous);
+        break;
+      case "π":
+        operation = " +";
+        operationValue = previous + Math.PI;
+        console.log(operationValue, operation, Math.PI, previous);
+        this.updateScreen(operationValue, operation, Math.PI, previous);
         break;
       case "DEL":
         this.clearLastDigitOnCurrentInput();
@@ -98,16 +110,21 @@ class Calculator {
   }
 
   changeOperation(newOperation) {
-    const possibleOperation = ["+", "-", "*", "/", "mod", "sqrt", "pow"];
+    const possibleOperation = ["+", "-", "*", "/"];
     const cleanerOperaion = ["C", "CE", "DEL"];
     const parentesis = ["(", ")"];
 
-    if (!possibleOperation.includes(newOperation) || cleanerOperaion) {
+    if (
+      !possibleOperation.includes(newOperation) ||
+      cleanerOperaion.includes(newOperation)
+    ) {
       return;
     }
 
-    this.previousOperationText.innerText =
-      this.previousOperationText.innerText.slice(0, -2) + newOperation;
+    this.previousOperationText.innerText = `${this.previousOperationText.innerText.slice(
+      0,
+      -2
+    )} ${newOperation}`;
   }
 
   clearLastDigitOnCurrentInput() {
@@ -121,14 +138,14 @@ class Calculator {
   }
 
   clearAllOperation() {
+    this.history.innerText = "Não há histórico";
     this.clearCurrentOperation();
     this.previousOperationText.innerText = "";
   }
 
   callEqualOperator() {
     const operation = previousOperationText.innerText.split(" ")[1];
-    this.history = `${previousOperationText.innerText} ${operation} ${currentOperationText.innerText}`;
-
+    console.log(operation);
     this.processOperation(operation);
   }
 
@@ -146,6 +163,7 @@ class Calculator {
         operationValue = current;
       }
       this.previousOperationText.innerText = `${operationValue} ${operation}`;
+      this.history.innerText = `${this.previousOperationText.innerText} ${current}`;
       this.currentOperationText.innerText = "";
     }
   }
@@ -173,6 +191,8 @@ buttons.forEach((btn) => {
       console.log(`O símbolo ${value} foi clicado!`);
       calculator.addDigit(value); // altera o atributo currentInput para o valor clicado pelo usuário
       // TODO: Tratar regras de inserção de parênteses e ponto
+    } else if (value === "π") {
+      calculator.addDigit(Math.PI);
     } else {
       if (calculator.currentOperationText.innerText === "" && value === "-") {
         calculator.addDigit(value);
